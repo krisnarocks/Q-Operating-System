@@ -1,11 +1,11 @@
-#ifndef FILES_H
-#define FILES_H
+#ifndef SKIP_H
+#define SKIP_H
 
+#include "../inc/kbDetect.h"
 #include "../inc/intTypeDefs.h"
 #include "../inc/stringUtils.h"
 #include "../inc/screenUtils.h"
-#include "../inc/fs.h"
 
-void files(string);
+void skip(string args);
 
 #endif
