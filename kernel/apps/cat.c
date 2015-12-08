@@ -75,3 +75,55 @@ bool lookup(fs_node_t* fsnode,string searchTerm)
   }
   return false;
 }
+
+// assumes all lines end with '>'
+// gives the user the line number they want
+string extract(string file,int line)
+{
+    printint(line,0x00);
+    ASSERT(strlen(file) < MAX_FNAME_LEN);
+    return extractLine(finddir_fs(fs_root, file),">");
+}
+
+string extractLine(fs_node_t* fsnode,string searchTerm)
+{
+  searchTerm = toUpper(searchTerm);
+
+  // Current letter and word that we are analyzing
+  char curChar;
+
+  if ((fsnode->flags & 0x7) == FS_FILE)
+  {
+    const uint64 rbuff = fsnode->length;
+    char buf[rbuff];
+    uint64 sz = read_fs(fsnode, 0, rbuff, (uint8*) buf);
+    uint64 j;
+
+    string curWord = (string) kmalloc(10 * sizeof(char));
+
+    print("\nReady for Processing!",0x0A);
+
+    for (j = 0; j < sz; j++)
+    {
+
+        char curCharString[] = { curChar, '\0' };
+        curChar = buf[j];
+
+        printch(curChar,0x0D);
+
+        if (streql(curCharString," "))
+        {
+            if (streql(curWord,searchTerm))
+            {
+                return curWord;
+            }
+            memset(curWord, '\0', 128);
+        }
+        else
+        {
+            strcat(curWord,curCharString);
+        }
+    }
+  }
+  return "random error occured";
+}

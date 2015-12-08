@@ -3,6 +3,7 @@
 
 #include "charUtils.h"
 #include "screenUtils.h"
+#include "assemblyFunctions.h" // Here is where the inportb and outportb is
 
 // We;; obviously fifty digits of PI isn't accurate enough..
 #ifndef PI
@@ -51,7 +52,10 @@ long addRange(long, long);
 
 long subRange(long, long);
 
-void swap(long*, long*);
+#define swap(a, b) \
+    a ^= b; \
+    b ^= a; \
+    a ^= b
 
 float sin(int ang);
 

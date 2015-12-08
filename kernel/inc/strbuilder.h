@@ -29,7 +29,7 @@ void strbuilder_appends(strbuilder_t*, string);
     strbuilder_append(stb, itos(i))
 
 #define strbuilder_insert(stb, str, i) \
-    strbuilder_insert(stb, str, i)
+    strbuilder_inserts(stb, str, i)
 
 void strbuilder_inserts(strbuilder_t*, string, uint32);
 
@@ -66,11 +66,17 @@ char strbuilder_charAt(strbuilder_t, uint32);
 
 string strbuilder_delete(strbuilder_t*, uint32, uint32);
 
-void strbuilder_clear(strbuilder_t*);
+char strbuilder_rmchar(strbuilder_t*, uint32);
+
+void strbuilder_rmOuter(strbuilder_t*, uint32, uint32);
+
+string strbuilder_clear(strbuilder_t*);
 
 void strbuilder_destroy(strbuilder_t*);
 
 void strbuilder_trim(strbuilder_t*);
+
+void strbuilder_flip(strbuilder_t*);
 
 bool strbuilder_contains(strbuilder_t, string);
 

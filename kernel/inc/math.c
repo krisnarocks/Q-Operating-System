@@ -190,7 +190,9 @@ float cos(int ang)
 
 #define AR_THERSOLD 1024
 long addRange(long l, long h) {
-    if (h < l) swap(&l, &h);
+    if (h < l) {
+        swap(l, h);
+    }
     if ((h - l) >= AR_THERSOLD) return (h * (h + 1) / 2) - ((l - 1) * l / 2);
     long acc = 0;
     while(h >= l) {
@@ -200,14 +202,8 @@ long addRange(long l, long h) {
     return acc;
 }
 
-long subRange(long l, long h) {
+inline long subRange(long l, long h) {
     return (addRange(l + 1, h) - l) * -1;
-}
-
-void swap(long* a, long* b) {
-    *a ^= *b;
-    *b ^= *a;
-    *a ^= *b;
 }
 
 long round(double num)
@@ -237,34 +233,20 @@ double abs(double num)
     return num;
 }
 
-
-
 //CHRONO FUNCTIONS
-uint8 in_byte (uint16 _port)
-{
-	uint8 rv;
-	__asm__ __volatile__ ("inb %1, %0" : "=a" (rv) : "dN" (_port));
-    return rv;
-}
-
-void out_byte (uint16 _port, uint8 _data)
-{
-	__asm__ __volatile__ ("outb %1, %0" : : "dN" (_port), "a" (_data));
-}
-
 enum {
       cmos_address = 0x70,
       cmos_data    = 0x71
 };
 
 int get_update_in_progress_flag() {
-      out_byte(cmos_address, 0x0A);
-      return (in_byte(cmos_data) & 0x80);
+      outportb(cmos_address, 0x0A);
+      return (inportb(cmos_data) & 0x80);
 }
 
 unsigned char get_RTC_register(int reg) {
-      out_byte(cmos_address, reg);
-      return in_byte(cmos_data);
+      outportb(cmos_address, reg);
+      return inportb(cmos_data);
 }
 
 void read_rtc() {
