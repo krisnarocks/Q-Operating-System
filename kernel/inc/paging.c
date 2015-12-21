@@ -201,13 +201,25 @@ void page_fault(registers_t regs)
     int reserved = regs.err_code & 0x8;     // Overwritten CPU-reserved bits of page entry?
 
     // Output an error message.
-    print("Page fault! ( ", 0x08);
-    if (present) {print("present ", 0x08);}
-    if (rw) {print("read-only ", 0x08);}
-    if (us) {print("user-mode ", 0x08);}
-    if (reserved) {print("reserved ", 0x08);}
-    print(") at 0x", 0x08);
-    printhex(faulting_address, 0x08);
-    print("\n", 0x08);
+    print("Page fault! ( ", dark_grey);
+    if (present)
+    {
+        print("present ", dark_grey);
+    }
+    if (rw)
+    {
+        print("read-only ", dark_grey);
+    }
+    if (us)
+    {
+        print("user-mode ", dark_grey);
+    }
+    if (reserved)
+    {
+        print("reserved ", dark_grey);
+    }
+    print(") at 0x", dark_grey);
+    printhex(faulting_address, dark_grey);
+    print("\n", dark_grey);
     PANIC("Page fault");
 }

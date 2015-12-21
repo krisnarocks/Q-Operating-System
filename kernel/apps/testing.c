@@ -1,13 +1,22 @@
 #include "testing.h"
 
-void test(string args) {
-    if(streql(args, " -list"))//For testing lists
+void test(string args)
+{
+    args = splitArg(args, 1);
+    if(streql(args, "") || streql(args, "-H"))
+    {
+        print("\nThis file is in charge of testing the data types embedded in Q-OS.",black);
+        print("\nAccepted Arguments:\n-list\tTests the list.c file\n-set \ttests the set.c file", black);
+        print("\n-strb\ttests the strbuilder.c file\n-y   \tshould return the current year...",black);
+    }
+    else if(streql(args, "-LIST"))//For testing lists
     {
         newline();
         list_t test_list = list_init();
         test_list.autoShrink = true;
 
-        for(uint8 i = 0; i < 4; i++) {
+        for(uint8 i = 0; i < 4; i++)
+        {
             list_add(&test_list, "1");
             list_add(&test_list, "2");
             list_add(&test_list, "3");
@@ -27,26 +36,30 @@ void test(string args) {
         }
         list_add(&test_list, "Pointless");
 
-        println("Done sizing up", 0x0F);
-        printint(test_list.capt, 0x0f);
+        println("Done sizing up", white);
+        printint(test_list.capt, white);
 
         element_t t;
-        for(uint8 i = 0; i < 64; i++) {
+        for(uint8 i = 0; i < 64; i++)
+        {
             t = list_shift(&test_list);
         }
-        println("\nLast item deleted should be \"16\"", 0x0F);
-        println(t.udata.strdata, 0x0F);
-        println("\nDeleting all but element \"Pointless\"", 0x0F);
+        println("\nLast item deleted should be \"16\"", white);
+        println(t.udata.strdata, white);
+        println("\nDeleting all but element \"Pointless\"", white);
         for(uint8 i = 0; i < test_list.size; i++)
-            println(list_get(test_list, i), 0x0F);
-        println("Done resizing up", 0x0F);
-        printint(test_list.capt, 0x0f);
+        {
+            println(list_get(test_list, i), white);
+        }
+        println("Done resizing up", white);
+        printint(test_list.capt, white);
         list_destroy(&test_list);
     }
-    else if(streql(args," -set"))
+    else if(streql(args,"-SET"))
     {
         set_t test_set = set_init();
-        for(uint8 i = 0; i < 4; i++) {
+        for(uint8 i = 0; i < 4; i++)
+        {
             set_add(&test_set, "0");
             set_add(&test_set, "1");
             set_add(&test_set, "2");
@@ -64,23 +77,23 @@ void test(string args) {
             set_add(&test_set, "14");
             set_add(&test_set, "15");
             set_add(&test_set, "16");
-            print("\nIteration: ", 0x0F);
-            printint(i, 0x0F);
+            print("\nIteration: ", white);
+            printint(i, white);
         }
-        println("\n\nInsertion::Output should be 17", 0x0F);
-        printint(test_set.size, 0x0F);
+        println("\n\nInsertion::Output should be 17", white);
+        printint(test_set.size, white);
 
         set_t tmp = set_init();
         set_add(&tmp, "Union item");
         set_union(&test_set, &tmp);
-        println("\n\nUnion::Output should be 18", 0x0F);
-        printint(test_set.size, 0x0F);
+        println("\n\nUnion::Output should be 18", white);
+        printint(test_set.size, white);
 
         set_intersect(&test_set, &tmp);
-        println("\n\nIntersect::Output should be 1", 0x0F);
-        printint(test_set.size, 0x0F);
+        println("\n\nIntersect::Output should be 1", white);
+        printint(test_set.size, white);
 
-        println("\n\nPreparing for diff test", 0x0F);
+        println("\n\nPreparing for diff test", white);
         set_add(&test_set, "1");
         set_add(&test_set, "2");
         set_add(&test_set, "3");
@@ -88,13 +101,13 @@ void test(string args) {
         set_add(&tmp, "3");
         set_add(&tmp, "4");
         set_diff(&test_set, &tmp);
-        println("Diff::Output should be 2", 0x0F);
-        printint(test_set.size, 0x0F);
+        println("Diff::Output should be 2", white);
+        printint(test_set.size, white);
 
         set_destroy(&tmp);
         set_destroy(&test_set);
     }
-    else if(streql(args, " -strb"))
+    else if(streql(args, "-STRB"))
     {
         static const string bak = "Hello, world ";
         static const uint32 bln = 13;
@@ -102,21 +115,29 @@ void test(string args) {
 
         strbuilder_append(&test_strb, bak);
         strbuilder_append(&test_strb, "Hello, 2nd world");
-        println("\nTesting backup text. Output should 1", 0x0F);
-        printint(streql(bak, test_strb.prevTxt), 0x0F);
-        println("\nOutput should be \"Hello, world Hello, 2nd world\"", 0x0F);
-        println(strbuilder_tostr(test_strb), 0x0F);
-        println("\nRemoving greeters from first world", 0x0F);
+        println("\nTesting backup text. Output should 1", red);
+        printint(streql(bak, test_strb.prevTxt), green);
+        println("\nOutput should be \"Hello, world Hello, 2nd world\"", red);
+        println(strbuilder_tostr(test_strb), green);
+        println("\nRemoving greeters from first world", red);
         strbuilder_delete(&test_strb, 0, bln);
-        println("\nOutput should be \"Hello, 2nd world\"", 0x0F);
-        println(strbuilder_tostr(test_strb), 0x0F);
+        println("\nOutput should be \"Hello, 2nd world\"", red);
+        println(strbuilder_tostr(test_strb), green);
         strbuilder_flip(&test_strb);
-        println("\nOutput should be \"dlrow dn2 ,olleH\"", 0x0F);
-        println(strbuilder_tostr(test_strb), 0x0F);
+        println("\nOutput should be \"dlrow dn2 ,olleH\"", red);
+        println(strbuilder_tostr(test_strb), green);
+        list_t tmp = strbuilder_split(test_strb, " ");
+        println("\nOutput should be last str split by spaces", red);
+        for(uint8 i = 0; i < tmp.size; i++)
+        {
+            println(list_get(tmp, i), white);
+        }
+        list_destroy(&tmp);
+        strbuilder_destroy(&test_strb);
     }
-    else if(streql(args," -y"))
+    else if(streql(args,"-Y"))
     {
        //getTime() test
-       printint(getTime("year"),0x0F);
+       printint(getTime("year"),white);
     }
 }

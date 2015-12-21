@@ -59,10 +59,11 @@ void strbuilder_replacec(strbuilder_t* stb, char c, uint32 l) {
 
 static inline string __vstb_tos(strbuilder_t stb, uint32 l, uint32 h) {
     uint32 strlen = abs(h - l);
-    if (strlen > stb.ilist.size) {
-        return ""; // Do not return NULL!
+    string msg;
+    if (strlen > stb.ilist.size || strlen == 0) {
+        return NULL;
     }
-    string msg = (string) kmalloc((strlen) * sizeof(char));
+    msg = (string) kmalloc((strlen) * sizeof(char));
     l = l < h ? l : h; // Make sure l is actually smaller than h
     uint32 i = 0;
     for( ; i < strlen; i++) {
@@ -97,7 +98,7 @@ char strbuilder_charAt(strbuilder_t stb, uint32 i) {
 void strbuilder_rmOuter(strbuilder_t* stb, uint32 l, uint32 h) {
     __backupText(stb);
     if(l < h) {
-        swap(l, h);
+        swapui(&l, &h);
     }
     uint32 i = 0;
     for( ; i < l; i++) {
@@ -142,6 +143,19 @@ void strbuilder_destroy(strbuilder_t* stb) {
 
 inline bool strbuilder_contains(strbuilder_t stb, string str) {
     return strbuilder_indexOf(stb, str) < stb.size;
+}
+
+list_t strbuilder_split(strbuilder_t stb, string str) {
+    list_t splitRst = list_init();
+    uint32 oldi = 0;
+    uint32 i = 0;
+    while(i < stb.size)
+    {
+        i = strbuilder_indexFrom(stb, str, i);
+        list_add(&splitRst, strbuilder_substr(stb, oldi, i));
+        oldi = ++i;
+    }
+    return splitRst;
 }
 
 static inline uint32 __strb_indexOf(strbuilder_t stb, string str, uint32 sindex) {

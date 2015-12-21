@@ -7,6 +7,13 @@ uint8 inportb (uint16 _port)
     return rv;
 }
 
+uint16 inportw (uint16 _port)
+{
+	uint16 rv;
+	__asm__ __volatile__ ("inw %1, %0" : "=a" (rv) : "dN" (_port));
+    return rv;
+}
+
 void outportb (uint16 _port, uint8 _data)
 {
 	__asm__ __volatile__ ("outb %1, %0" : : "dN" (_port), "a" (_data));
@@ -35,6 +42,9 @@ void reboot()
 
 void shutdown()
 {
+    // Ok... Suposingly this only reboots the os...
+    asm_powoff();
+    
 /* OLD SHUTDOWN SEQUENCE. does not work on some VM
     __asm__ __volatile__ ("cli");
 		while(true) {
@@ -59,12 +69,12 @@ void shutdown()
 
 		"movb 0x53, %ah\n"
 		"xorw %bx,%bx\n"
-		"movb $0x02,%cl\n"
+		"movb $0x82,%cl\n"
 		"int $0x15\n"
 
 		"movb $0x53,%al\n"
-		"movw $0x0001,%bx\n"
-		"movw $0x0003,%cx\n"
+		"movw $0x8001,%bx\n"
+		"movw $0x8003,%cx\n"
 		"int $0x15\n"
 
 		"ret\n"
@@ -76,8 +86,9 @@ void shutdown()
                 "mov %ax, %ss\n"
                 "mov %sp, 0xf000\n"
                 "mov %ax, 0x5307\n"
-                "mov %bx, 0x0001\n"
-                "mov %cx, 0x0003\n"
+                "mov %bx, 0x8001\n"
+                "mov %cx, 0x8003\n"
                 "int $0x15\n"
 	);*/
+
 }

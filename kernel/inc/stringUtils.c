@@ -1,5 +1,19 @@
 #include "stringUtils.h"
+#include "strbuilder.h" // THIS LINE MUST BE HERE!!!
 #include "kheap.h" // THIS LINE MUST BE HERE!!!
+
+int lastArg(string args)
+{
+	int tmp = 0;
+	while (true)
+	{
+		tmp++;
+		if (streql(splitArg(args, tmp)," "))
+		{
+			return tmp - 1;
+		}
+    }
+}
 
 uint16 strlen(string ch)
 {
@@ -106,15 +120,14 @@ string strTrim(string str)
 
 #define INT_DIGITS 19       /* enough for 64 bit integer */
 
-/*
- * Based off itoa from opensource apple com.
- */
-string itos(int i, uint8 base) {
+string itos(int i, uint8 base)
+{
     /* Room for INT_DIGITS digits, - and '\0' */
     static char buf[INT_DIGITS + 2];
     string p = buf + INT_DIGITS + 1;  /* points to terminating '\0' */
     bool isNeg = false;
-    if (i < 0) {
+    if (i < 0)
+	{
         isNeg = true;
         i = -i;
     }
@@ -161,7 +174,7 @@ string get0Arg(string rawArgs)
         modTmp = tmp + 1;
 
         // For Debug:
-        //printint(tmp,0x03);
+        //printint(tmp,grey);
 
         char curArgChar = rawArgs[tmp];
         char curArgCharString[] = { curArgChar, '\0' };
@@ -176,7 +189,7 @@ string get0Arg(string rawArgs)
         }
         else
         {
-            print(curArgCharString,0x0F);
+            print(curArgCharString,white);
             strcat(curArg,curArgCharString);
         }
 
@@ -276,7 +289,14 @@ string splitArg(string args, int argc) {// argc is the argument the program need
 		if(args[i] == 32) {
 	    	argLoc += 1;
 		}
-		if(argLoc == argc) {
+		if(argc == 0) {
+		    while(args[i + j] != 32 && args[i + j] != 0) {
+				fargs[j] = args[i + j];
+				j++;
+			}
+	    	break;
+		}
+		else if(argLoc == argc) {
 		    while(args[i+j+1] != 32 && args[i+j+1] != 0) {
 				fargs[j] = args[i+j+1];
 				j++;
@@ -317,4 +337,66 @@ string toLower(string s) {
         i++;
     }
     return s;
+}
+
+int strHash(string s) {
+    int tmp = stoc(s) * 10;
+    tmp &= (tmp ^ 7) >> 4;
+    return tmp;
+}
+
+inline string __vstrformat(string str, va_list ap)
+{
+    strbuilder_t msg = strbuilder_init();
+    char curChar;
+    do {
+        curChar = *str++;
+        if(curChar == '%')
+        {
+            curChar = *str++;
+            switch(curChar)
+            {
+            case '%':
+                strbuilder_appendc(&msg, '%');
+                break;
+            case 'd':
+            case 'i':
+                strbuilder_appendi(&msg, va_arg(ap, int));
+                break;
+            case 'o':
+                strbuilder_append(&msg, itos8(va_arg(ap, int)));
+                break;
+            case 'x':
+                strbuilder_append(&msg, toLower(itos16(va_arg(ap, int))));
+                break;
+            case 'X':
+                strbuilder_append(&msg, toUpper(itos16(va_arg(ap, int))));
+                break;
+            case 'f':
+            case 'F':
+                strbuilder_appendf(&msg, va_arg(ap, double));
+                break;
+            case 'c':
+                strbuilder_appendc(&msg, va_arg(ap, int));
+                break;
+            case 's':
+                strbuilder_append(&msg, va_arg(ap, string));
+                break;
+            }
+        }
+        else
+        {
+            strbuilder_appendc(&msg, curChar);
+        }
+    } while (*str != 0);
+    return strbuilder_tostr(msg);
+}
+
+string strformat(string str, ...)
+{
+    va_list ap;
+    va_start(ap, str);
+    string msg = __vstrformat(str, ap);
+    va_end(ap);
+    return msg;
 }

@@ -32,6 +32,8 @@ string ftos(float);
 
 string get0Arg(string);
 
+int lastArg(string);
+
 string splitArg(string, int);
 
 int stoi(string);
@@ -47,5 +49,9 @@ string sentenceCase(string);
 string toUpper(string);
 
 string toLower(string);
+
+int strHash(string);
+
+string strformat(string, ...);
 
 #endif

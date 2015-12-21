@@ -2,9 +2,13 @@
 
 #define curWord toUpper(splitArg(args, tmp))
 
+// has the user finished the 'me' setup process?
 bool hasSetup = false;
-char zip[18];
 
+// the users ZIP/Post Code
+string zip;
+
+// variables to determine if the entered values are valid based on the Me database
 bool birthYearValid = false;
 bool birthDateValid = false;
 bool birthMonthValid = false;
@@ -15,190 +19,233 @@ bool stateValid = false;
 bool cityValid = false;
 bool zipValid = false;
 
+// Are you currently in the 'me' Command Line interface?
 bool querying = false;
 
-void me(string args) {
+// this is shown at the top of every unanswered question during 'me' setup
+void meHeader()
+{
+    clearLine(0,26,0x88);
+
+    drawFrame(header_background, 20, 8, 60, 11);
+    printAt("Me Setup Process", 0x3D, 21, 9);
+}
+
+// we show this is a correct answer is given during the 'me' setup
+void goodAnswer()
+{
+    drawFrame(header_background, 20, 8, 60, 11);
+    printAt("Good", 0x32, 21, 9);
+}
+
+// this is shown when someone enters an invalid answer during the 'me' setup
+void badAnswer()
+{
+    drawFrame(header_background, 20, 8, 60, 11);
+    printAt("Invalid", 0x34, 21, 9);
+}
+
+void me(string args)
+{
     if (!hasSetup)
     {
-        if (streql(splitArg(args, 1), "test") && !hasSetup)
+        if (streql(splitArg(args, 1), "-H"))
+        {
+            // a super legit help section brought to you by @plankp
+            print("\nMe is here to help you... Believe me...", brown);
+        }
+        else if (streql(splitArg(args, 1), "TEST") && !hasSetup)
         {
             hasSetup = true;
-            print("\nYou have skipped the Me setup process.",0x06);
+            messageBox("\nYou have skipped the Me setup process.");
         }
         else if (!hasSetup)
         {
-            print("\nWelcome to Me.",0x03);
-            print("\nMe is the worlds first truly rubbish personal assistant.",0x03);
-            print("\nTo use me, simply ask it a question.",0x03);
-            print("\nFor example, type 'me what is the time?'",0x03);
-            print("\nTo start using Me, please enter some basic information below when prompted.",0x03);
-            newline();
+            meHeader();
 
-            newline();
-            print("What is your name: ",0x0B);
-            readStr(name,128);
+            messageBox("\nWelcome to Me. To start using Me,\n\rpress <RET> to setup Me.");
+
+            meHeader();
+
+            name = messageBox_I("What is your name?");
+
+            meHeader();
 
             while (!birthYearValid)
             {
-                newline();
-                print("What year were you born in: ",0x0B);
-                readStr(birthYear,5);
+                birthYear = messageBox_I("What year were you born in?");
                 birthYearInt = stoi(birthYear);
 
                 // need to make this always the current year + 1
-                if (birthYearInt < 2016 && birthYearInt > 1900)
+                if (birthYearInt < getTime("year") && birthYearInt > 1900)
                 {
                     birthYearValid = true;
-                    print(" Good",0x02);
+                    goodAnswer();
                 }
 
                 if (!birthYearValid)
                 {
-                    print(" Invalid",0x0C);
+                    badAnswer();
                 }
             }
 
+            meHeader();
 
             while (!birthDateValid)
             {
                 newline();
-                print("What day of the month were you born in: ",0x0B);
-                readStr(birthDate,3);
+                birthDate = messageBox_I("What day were you born on");
                 birthDateInt = stoi(birthDate);
 
                 if (birthDateInt < 32)
                 {
                     birthDateValid = true;
-                    print(" Good",0x02);
+                    goodAnswer();
                 }
 
                 if (!birthDateValid)
                 {
-                    print(" Invalid",0x0C);
+                    badAnswer();
                 }
             }
+
+            meHeader();
 
             while (!birthMonthValid)
             {
                 newline();
-                print("What month were you born in: ",0x0B);
-                readStr(birthMonth,128);
+                birthMonth = messageBox_I("What month were you born in?");
                 birthMonth = toUpper(birthMonth);
 
                 if (findInDictionary("me/setup/month.text",birthMonth))
                 {
                     birthMonthValid = true;
-                    print(" Good",0x02);
+                    goodAnswer();
                 }
 
                 if (!birthMonthValid)
                 {
-                    print(" Invalid",0x0C);
+                    badAnswer();
                 }
             }
+
+            meHeader();
 
             while (!continentValid)
             {
 
                 newline();
-                print("What continent do you live in: ",0x0B);
-                readStr(continent,128);
+                continent = messageBox_I("What continent do you live in?");
                 continent = toUpper(continent);
 
                 if (findInDictionary("me/setup/continent.text",continent))
                 {
                     continentValid = true;
-                    print(" Good",0x02);
+                    goodAnswer();
                 }
 
                 if (!continentValid)
                 {
-                    print(" Invalid",0x0C);
+                    badAnswer();
                 }
             }
 
+            meHeader();
 
             while (!countryValid)
             {
                 newline();
-                print("What country do you live in: ",0x0B);
-                readStr(country,128);
+                country = messageBox_I("What country do you live in?");
                 country = toUpper(country);
 
                 if (findInDictionary("me/setup/country.text",country))
                 {
                     countryValid = true;
-                    print(" Good",0x02);
+                    goodAnswer();
                 }
 
                 if (!countryValid)
                 {
-                    print(" Invalid",0x0C);
+                    badAnswer();
                 }
             }
+
+            meHeader();
 
             while (!stateValid)
             {
                 newline();
-                print("What state/province do you currently live in: ",0x0B);
-                readStr(state,128);
+                state = messageBox_I("What state/province do you live in?");
                 state = toUpper(state);
 
                 if (findInDictionary("me/setup/state.text",state))
                 {
                     stateValid = true;
-                    print(" Good",0x02);
+                    goodAnswer();
                 }
 
                 if (!stateValid)
                 {
-                    print(" Invalid",0x0C);
+                    badAnswer();
                 }
             }
 
+            meHeader();
+
             newline();
-            print("What city do you live in: ",0x0B);
-            readStr(city,128);
+            city = messageBox_I("What city/town do you live in?");
+
+            clearLine(0,26,0x88);
+
+            drawFrame(header_background, 20, 8, 60, 11);
+            printAt("Me Setup Process", 0x3D, 21, 9);
 
             while (!zipValid)
             {
                 newline();
-                print("What is the zip/post code in your area: ",0x0B);
-                readStr(zip, 17);
+                zip = messageBox_I("What is your zip/post code?");
                 zipInt = htoi(zip);
                 if (zipInt > 0)
                 {
                     zipValid = true;
-                    print(" Good",0x02);
+                    goodAnswer();
+                }
+                else
+                {
+                    badAnswer();
                 }
             }
 
-            newline();
-            hasSetup = "true";
-            print("Me is now ready to use!",0x03);
+            meHeader();
 
-            newline();
-            print("When Me dosen't know information, it can ask you for help.",0x03);
+            hasSetup = "true";
+            messageBox("Me is now ready to use! Type 'me' on\n\rthe command line to begin.");
+
+            printIntro();
+            drawBorder(screen_background, 0, 4, 80, sh - 1);
+
+            actualY = 5;
+            printAt("Q-Kernel>  ", light_grey, 1, actualY);
         }
         else
         {
-            print("\nYou have already completed the setup process for Me!",0x05);
+            print("\nYou have already completed the setup process for Me!",purple);
         }
     }
     else if (streql(splitArg(args, 1),""))
     {
         querying = true;
-        char* meArgs = "";
+        string meArgs = NULL;
 
         while (querying)
         {
             newline();
 
             //meArgs = "";
-            print("me>  ",0x0A);
-            readStr(meArgs,128);
+            print("me>  ",green);
+            meArgs = readstr();
 
-            print(answer(meArgs,0),0x04);
+            print(answer(meArgs,0),red);
         }
     }
     else

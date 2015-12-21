@@ -26,7 +26,7 @@ void strbuilder_appends(strbuilder_t*, string);
     strbuilder_append(stb, ftos(f))
 
 #define strbuilder_appendi(stb, i) \
-    strbuilder_append(stb, itos(i))
+    strbuilder_append(stb, itos10(i))
 
 #define strbuilder_insert(stb, str, i) \
     strbuilder_inserts(stb, str, i)
@@ -39,7 +39,7 @@ void strbuilder_insertc(strbuilder_t*, char, uint32);
     strbuilder_insert(stb, ftos(f), i)
 
 #define strbuilder_inserti(stb, i, index) \
-    strbuilder_insert(stb, itos(i), index)
+    strbuilder_insert(stb, itos10(i), index)
 
 #define strbuilder_replace(stb, str, i) \
     strbuilder_replaces(stb, str, i)
@@ -52,7 +52,7 @@ void strbuilder_replacec(strbuilder_t*, char, uint32);
     strbuilder_replace(stb, ftos(f), i)
 
 #define strbuilder_replacei(stb, i, index) \
-    strbuilder_replace(stb, itos(i), index)
+    strbuilder_replace(stb, itos10(i), index)
 
 string strbuilder_tostr(strbuilder_t);
 
@@ -83,5 +83,7 @@ bool strbuilder_contains(strbuilder_t, string);
 uint32 strbuilder_indexOf(strbuilder_t, string);
 
 uint32 strbuilder_indexFrom(strbuilder_t, string, uint32);
+
+list_t strbuilder_split(strbuilder_t, string);
 
 #endif
